@@ -29,6 +29,7 @@ export type State = {
 	vcInstance: VC | null;
 	metamaskAddress: string;
 	viteBalanceInfo: ViteBalanceInfo;
+	accountId: string;
 };
 
 export type ViteBalanceInfo = {
@@ -69,15 +70,31 @@ export type NewAccountBlock = {
 	removed: boolean;
 };
 
+export type AccountCreatedEvent = {
+	returnValues: {
+		accountId: number;
+		creator: string;
+	};
+	event: string;
+	raw: {
+		data: string;
+		topics: [string];
+	};
+	signature: string;
+	accountBlockHeight: string;
+	accountBlockHash: string;
+	address: string;
+};
+
 export type MotionCreatedEvent = {
 	returnValues: {
 		accountId: number;
 		motionId: number;
 		motionType: number;
-		address: string;
+		proposer: string;
 		tokenId: string;
 		transferAmount: number;
-		address: string;
+		to: string;
 		destinationAccount: number;
 		threshold: number;
 	};

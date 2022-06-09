@@ -1,6 +1,5 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
-//const vuilder = require('@vite/vuilder');
 import * as vuilder from '@vite/vuilder';
 import config from './vite.config.json';
 
@@ -57,7 +56,6 @@ describe('test Joint Accounts', () => {
 		// check default balance
 		expect(await joint.balance()).to.be.equal('0');
 	});
-	/*
 	it('creates an account', async function () {
 		await joint.call('createAccount', [[alice.address, bob.address, charlie.address], 2, 0, 0], {
 			caller: alice,
@@ -78,6 +76,7 @@ describe('test Joint Accounts', () => {
 			}, // Account created
 		]);
 	});
+
 	it('deposits to an account', async function () {
 		await joint.call('createAccount', [[alice.address, bob.address], 2, 1, 0], {
 			caller: alice,
@@ -110,6 +109,7 @@ describe('test Joint Accounts', () => {
 			}, // Alice deposits
 		]);
 	});
+
 	it('creates and votes a transfer motion', async function () {
 		await joint.call('createAccount', [[alice.address, bob.address], 2, 1, 0], {
 			caller: alice,
@@ -227,7 +227,7 @@ describe('test Joint Accounts', () => {
 			}, // Transfer is executed
 		]);
 	});
- */
+
 	it('cancels a motion', async function () {
 		await joint.call('createAccount', [[alice.address, bob.address], 2, 1, 0], {
 			caller: alice,

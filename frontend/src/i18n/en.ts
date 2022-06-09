@@ -9,6 +9,8 @@ const en = {
 	system: 'system',
 	logOut: 'Log Out',
 	createAccount: 'Create Joint Account',
+	threshold: 'Threshold',
+	addMember: 'Add new member',
 	invalidAddress: 'Invalid address',
 	amountMustBePositive: 'Amount must be positive',
 	connectWalletToUseDapp: 'Connect wallet to use dapp',
