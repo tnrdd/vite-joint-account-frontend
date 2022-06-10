@@ -41,7 +41,7 @@ const ViteConnectButton = ({ setState, i18n, vcInstance }: Props) => {
 	) : (
 		<>
 			<button
-				className="bg-skin-medlight h-8 px-3 rounded-md brightness-button font-semibold text-white shadow"
+				className="bg-skin-medlight min-h-8 px-3 rounded-md brightness-button font-semibold text-white shadow"
 				onClick={async () => {
 					vcInstance = initViteConnect();
 					connectURISet(await vcInstance.createSession());

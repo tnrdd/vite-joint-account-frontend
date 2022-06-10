@@ -1,8 +1,10 @@
-import { constant, wallet } from '@vite/vitejs';
-import { useRef, useState } from 'react';
+import { abi, constant, wallet } from '@vite/vitejs';
+import { useRef, useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { XIcon } from '@heroicons/react/solid';
-import NewAccount from '../containers/NewAccount';
+import NewAccount from '../components/NewAccount';
+import Access from '../components/Access';
+import Deposit from '../components/Deposit';
 import Modal from '../components/Modal';
 import TextInput, { TextInputRefObject } from '../components/TextInput';
 import JointContract from '../contracts/JointAccounts';
@@ -34,8 +36,17 @@ const AppHome = ({
 
 	return (
 		<div className="space-y-4 max-w-3xl mx-auto">
-			{accountId && <span>Account ID: {accountId}</span>}
-			{!accountId && <NewAccount />}
+			{!vcInstance && (
+				<p className="text-center font-bold">Please connect your wallet to use the app</p>
+			)}
+			{!accountId && vcInstance && <NewAccount />}
+			{!accountId && vcInstance && <p className="text-center font-bold">OR</p>}
+			{!accountId && vcInstance && <Access />}
+
+			{accountId && (
+				<div className="flex justify-center gap 4 font-bold">Account ID: {accountId}</div>
+			)}
+			{accountId && <Deposit />}
 			{!!promptTxConfirmation && (
 				<Modal onClose={() => promptTxConfirmationSet(false)}>
 					<p className="text-center text-lg font-semibold">

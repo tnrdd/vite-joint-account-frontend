@@ -14,8 +14,7 @@ async function run(): Promise<void> {
 
 		// deploy
 		let joint = compiledContracts.JointAccounts;
-		console.log(joint.abi);
-		/*
+		//console.log(joint.abi);
 		joint.setDeployer(deployer).setProvider(provider);
 		await joint.deploy({});
 	expect(joint.address).to.be.a('string');
@@ -27,7 +26,6 @@ async function run(): Promise<void> {
 		amount: '2001000000000000000000',
 	});
 
-*/
 		return;
 	} catch (err) {
 		console.log(err);
