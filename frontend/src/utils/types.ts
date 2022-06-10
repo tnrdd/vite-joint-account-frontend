@@ -29,7 +29,7 @@ export type State = {
 	vcInstance: VC | null;
 	metamaskAddress: string;
 	viteBalanceInfo: ViteBalanceInfo;
-	accountId: string;
+	accountId: number;
 };
 
 export type ViteBalanceInfo = {
