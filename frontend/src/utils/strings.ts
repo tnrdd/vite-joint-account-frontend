@@ -76,24 +76,3 @@ export const formatDate = (date: number | Date, verbose?: boolean, utc?: boolean
 	}
 	return `${year}-${month + 1}-${day} ${hour}:${minute}:${second}`;
 };
-
-export const hexToBase64 = (hexstring: any) => {
-	return btoa(
-		hexstring
-			.match(/\w{2}/g)
-			.map(function (a: any) {
-				return String.fromCharCode(parseInt(a, 16));
-			})
-			.join('')
-	);
-}
-
-export const base64ToHex = (str: any) => {
-	const raw = atob(str);
-	let result = '';
-	for (let i = 0; i < raw.length; i++) {
-		const hex = raw.charCodeAt(i).toString(16);
-		result += hex.length === 2 ? hex : '0' + hex;
-	}
-	return result.toUpperCase();
-}

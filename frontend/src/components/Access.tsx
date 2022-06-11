@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { XIcon } from '@heroicons/react/solid';
 import Modal from './Modal';
 import TextInput, { TextInputRefObject } from './TextInput';
 import JointContract from '../contracts/JointAccounts';
@@ -51,7 +50,6 @@ const Access = ({ i18n, viteApi, networkType, vcInstance, callContract, setState
 							[accountId]
 						);
 
-						console.log(exists);
 						if (exists && exists[0] === '0') {
 							setState({
 								toast: i18n.invalidAccountId,

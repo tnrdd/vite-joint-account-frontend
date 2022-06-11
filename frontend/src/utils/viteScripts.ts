@@ -1,6 +1,5 @@
 import { abi, utils } from '@vite/vitejs';
 import { ViteAPI } from '@vite/vitejs/distSrc/utils/type';
-import { hexToBase64, base64ToHex } from './strings';
 
 export const getPastEvents = async (
 	viteApi: ViteAPI,
@@ -72,11 +71,14 @@ export const getContractState = async (
 	params: any[]
 ) => {
 	const methodAbi = contractAbi.find((method) => method.name === methodName);
-	const data = abi.encodeFunctionCall(methodAbi, params);
+	const data = abi.encodeFunctionCall(methodAbi, params || []);
 	const state = await viteApi.request('contract_query', {
 		address: contractAddress,
-		data: hexToBase64(data),
+		data: utils._Buffer.from(data, 'hex').toString('base64'),
 	});
-	const hexState = base64ToHex(state);
+	if (!state) {
+		return null;
+	}
+	const hexState = utils._Buffer.from(state, 'base64').toString('hex');
 	return abi.decodeParameters(methodAbi?.outputs, hexState);
 };

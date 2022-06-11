@@ -5,6 +5,7 @@ import { XIcon } from '@heroicons/react/solid';
 import NewAccount from '../components/NewAccount';
 import Access from '../components/Access';
 import Deposit from '../components/Deposit';
+import Motion from '../components/Motion';
 import Modal from '../components/Modal';
 import TextInput, { TextInputRefObject } from '../components/TextInput';
 import JointContract from '../contracts/JointAccounts';
@@ -47,6 +48,8 @@ const AppHome = ({
 				<div className="flex justify-center gap 4 font-bold">Account ID: {accountId}</div>
 			)}
 			{accountId && <Deposit />}
+			{accountId && <p className="text-center font-bold">OR</p>}
+			{accountId && <Motion />}
 			{!!promptTxConfirmation && (
 				<Modal onClose={() => promptTxConfirmationSet(false)}>
 					<p className="text-center text-lg font-semibold">
