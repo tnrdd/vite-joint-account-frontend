@@ -1,5 +1,4 @@
 import { useRef, useState, useEffect } from 'react';
-import { XIcon } from '@heroicons/react/solid';
 import Modal from './Modal';
 import TextInput, { TextInputRefObject } from './TextInput';
 import JointContract from '../contracts/JointAccounts';
@@ -17,7 +16,7 @@ type Motion = {
 	proposer?: string;
 	to?: string;
 	tokenId?: string;
-	transferAmount?: string;
+	transferAmount?: number;
 	votes?: string | null;
 };
 
@@ -75,15 +74,16 @@ const Motion = ({
 					JointContract.address[networkType],
 					JointContract.abi,
 					'voteCount',
-					[accountId, parseInt(event.motionId)]
+					[accountId, event.motionId]
 				);
+				const tokenInfo = await viteApi.request('contract_getTokenInfoById', event.tokenId);
 				motionSet({
 					threshold: results[1][0],
 					id: event.motionId,
 					proposer: event.proposer,
 					to: event.to,
 					tokenId: event.tokenId,
-					transferAmount: event.transferAmount,
+					transferAmount: event.transferAmount / 10 ** tokenInfo.decimals,
 					votes: votes && votes[0],
 				});
 			} else {
@@ -115,7 +115,54 @@ const Motion = ({
 		<div className="flex flex-col gap-4">
 			<p className="text-2xl">Active motion</p>
 			{motion.id ? (
-				<div>{`Transfer ${motion.transferAmount} of ${motion.tokenId} to ${motion.to} votes:${motion.votes}/${motion.threshold}`}</div>
+				<div className="flex flex-col gap-4 bg-white rounded-md p-4 break-all">
+					<span>
+						<b>Transfer</b> {motion.transferAmount} <b>of</b> {motion.tokenId}
+					</span>
+					<span>
+						{' '}
+						<b>to</b> {motion.to}
+					</span>
+					<span>
+						{' '}
+						<b>votes:</b>
+						{motion.votes}/{motion.threshold}
+					</span>
+					<button
+						className={`${
+							vcInstance ? 'bg-skin-medlight brightness-button' : 'bg-gray-400'
+						} h-8 px-3 rounded-md font-semibold text-white shadow`}
+						disabled={!vcInstance}
+						onClick={async () => {
+							const contractAddress = JointContract.address[networkType];
+							promptTxConfirmationSet(true);
+							await callContract(JointContract, 'voteMotion', [accountId, motion.id]);
+							setState({
+								toast: i18n.transactionConfirmed,
+							});
+							promptTxConfirmationSet(false);
+						}}
+					>
+						{i18n.vote}
+					</button>
+					<button
+						className={`${
+							vcInstance ? 'bg-black brightness-button' : 'bg-gray-400'
+						} h-8 px-3 rounded-md font-semibold text-white shadow`}
+						disabled={!vcInstance}
+						onClick={async () => {
+							const contractAddress = JointContract.address[networkType];
+							promptTxConfirmationSet(true);
+							await callContract(JointContract, 'cancelMotion', [accountId, motion.id]);
+							setState({
+								toast: i18n.transactionConfirmed,
+							});
+							promptTxConfirmationSet(false);
+						}}
+					>
+						{i18n.cancelMotion}
+					</button>
+				</div>
 			) : (
 				<p>No active motion...</p>
 			)}
@@ -157,11 +204,11 @@ const Motion = ({
 				} h-8 px-3 rounded-md font-semibold text-white shadow`}
 				disabled={!vcInstance}
 				onClick={async () => {
-					if (validateInputs([amountRef])) {
+					if (validateInputs([tokenIdRef, amountRef, beneficiaryAddressRef])) {
 						const contractAddress = JointContract.address[networkType];
 						const tokenInfo = await viteApi.request('contract_getTokenInfoById', tokenId);
 						promptTxConfirmationSet(true);
-						const block = await callContract(JointContract, 'createTransferMotion', [
+						await callContract(JointContract, 'createTransferMotion', [
 							accountId,
 							tokenId,
 							toSmallestUnit(amount, tokenInfo.decimals),
