@@ -1,10 +1,8 @@
 import { useRef, useState } from 'react';
-import Modal from './Modal';
 import TextInput, { TextInputRefObject } from './TextInput';
 import JointContract from '../contracts/JointAccounts';
 import { connect } from '../utils/globalContext';
 import { validateInputs } from '../utils/misc';
-import { toSmallestUnit } from '../utils/strings';
 import { State } from '../utils/types';
 import { getContractState } from '../utils/viteScripts';
 
@@ -44,7 +42,7 @@ const Access = ({ i18n, viteApi, networkType, vcInstance, callContract, setState
 						const contractAddress = JointContract.address[networkType];
 						const exists = await getContractState(
 							viteApi,
-							JointContract.address[networkType],
+							contractAddress,
 							JointContract.abi,
 							'accountExists',
 							[accountId]

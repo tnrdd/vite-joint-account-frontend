@@ -16,7 +16,7 @@ const en = {
 	tokenId: 'The token ID',
 	access: 'Access',
 	deposit: 'Deposit',
-	vote: 'Vote yes to motion',
+	vote: 'Approve the motion',
 	cancelMotion: 'Cancel the motion',
 	invalidAddress: 'Invalid address',
 	invalidAccountId: 'Invalid account ID',

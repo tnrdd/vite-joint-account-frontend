@@ -58,7 +58,6 @@ const Deposit = ({
 				disabled={!vcInstance}
 				onClick={async () => {
 					if (validateInputs([amountRef])) {
-						const contractAddress = JointContract.address[networkType];
 						const tokenInfo = await viteApi.request('contract_getTokenInfoById', tokenId);
 						promptTxConfirmationSet(true);
 						await callContract(

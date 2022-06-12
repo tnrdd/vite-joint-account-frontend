@@ -16,8 +16,10 @@
 	--text-primary-color: #1d2024;
 	--text-secondary-color: #6e737c;
 	--text-muted-color: #90939c;
+	--text-button-alt: #ffffff;
 	--alt-color: #d9d9e4;
 	--bg-line-divider-color: #dbe4f0;
+	--bg-button-alt: #000000;
 }
 
 .dark {
@@ -27,7 +29,9 @@
 	--text-primary-color: #eeeeee;
 	--text-secondary-color: #a6a9b6;
 	--text-muted-color: #818388;
+	--text-button-alt: #000000;
 	--alt-color: #1b1f28;
 	--bg-line-divider-color: #0e1118;
+	--bg-button-alt: #ffffff;
 }
 /* } */

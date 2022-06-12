@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import Modal from './Modal';
 import TextInput, { TextInputRefObject } from './TextInput';
 import JointContract from '../contracts/JointAccounts';
@@ -20,7 +20,7 @@ type Motion = {
 	votes?: string | null;
 };
 
-const Motion = ({
+const MotionView = ({
 	i18n,
 	viteApi,
 	networkType,
@@ -38,7 +38,7 @@ const Motion = ({
 	const amountRef = useRef<TextInputRefObject>();
 	const beneficiaryAddressRef = useRef<TextInputRefObject>();
 
-	const updateMotionStatus = async () => {
+	const updateMotionStatus = useCallback(async () => {
 		const events = getPastEvents(
 			viteApi,
 			JointContract.address[networkType],
@@ -90,7 +90,7 @@ const Motion = ({
 				motionSet({});
 			}
 		}
-	};
+	}, [networkType, viteApi, accountId]);
 
 	useEffect(() => {
 		updateMotionStatus();
@@ -109,13 +109,13 @@ const Motion = ({
 					updateMotionStatus();
 				});
 			});
-	}, []);
+	}, [networkType, updateMotionStatus, viteApi]);
 
 	return (
 		<div className="flex flex-col gap-4">
 			<p className="text-2xl">Active motion</p>
 			{motion.id ? (
-				<div className="flex flex-col gap-4 bg-white rounded-md p-4 break-all">
+				<div className="flex flex-col gap-4 bg-skin-middleground rounded-md p-4 break-all text-skin-secondary">
 					<span>
 						<b>Transfer</b> {motion.transferAmount} <b>of</b> {motion.tokenId}
 					</span>
@@ -134,7 +134,6 @@ const Motion = ({
 						} h-8 px-3 rounded-md font-semibold text-white shadow`}
 						disabled={!vcInstance}
 						onClick={async () => {
-							const contractAddress = JointContract.address[networkType];
 							promptTxConfirmationSet(true);
 							await callContract(JointContract, 'voteMotion', [accountId, motion.id]);
 							setState({
@@ -147,11 +146,10 @@ const Motion = ({
 					</button>
 					<button
 						className={`${
-							vcInstance ? 'bg-black brightness-button' : 'bg-gray-400'
+							vcInstance ? 'bg-red-500 brightness-button' : 'bg-gray-400'
 						} h-8 px-3 rounded-md font-semibold text-white shadow`}
 						disabled={!vcInstance}
 						onClick={async () => {
-							const contractAddress = JointContract.address[networkType];
 							promptTxConfirmationSet(true);
 							await callContract(JointContract, 'cancelMotion', [accountId, motion.id]);
 							setState({
@@ -205,7 +203,6 @@ const Motion = ({
 				disabled={!vcInstance}
 				onClick={async () => {
 					if (validateInputs([tokenIdRef, amountRef, beneficiaryAddressRef])) {
-						const contractAddress = JointContract.address[networkType];
 						const tokenInfo = await viteApi.request('contract_getTokenInfoById', tokenId);
 						promptTxConfirmationSet(true);
 						await callContract(JointContract, 'createTransferMotion', [
@@ -238,4 +235,4 @@ const Motion = ({
 	);
 };
 
-export default connect(Motion);
+export default connect(MotionView);

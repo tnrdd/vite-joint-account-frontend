@@ -21,6 +21,7 @@ module.exports = {
 					primary: 'var(--text-primary-color)',
 					secondary: 'var(--text-secondary-color)',
 					muted: 'var(--text-muted-color)',
+					'button-alt': 'var(--text-button-alt)',
 					// highlight: 'var(--highlight-color)',
 				},
 			},
@@ -30,6 +31,7 @@ module.exports = {
 					middleground: 'var(--bg-middleground-color)',
 					foreground: 'var(--bg-foreground-color)',
 					'line-divider': 'var(--bg-line-divider-color)',
+					'button-alt':'var(--bg-button-alt)',
 				},
 			},
 			borderColor: {

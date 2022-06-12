@@ -5,7 +5,6 @@ import TextInput, { TextInputRefObject } from './TextInput';
 import JointContract from '../contracts/JointAccounts';
 import { connect } from '../utils/globalContext';
 import { validateInputs } from '../utils/misc';
-import { toSmallestUnit } from '../utils/strings';
 import { State } from '../utils/types';
 import { getPastEvents } from '../utils/viteScripts';
 
@@ -49,8 +48,8 @@ const NewAccount = ({ i18n, viteApi, networkType, vcInstance, callContract, setS
 			<div className="flex flex-col gap-4">
 				<button
 					className={`${
-						vcInstance ? 'bg-black brightness-button' : 'bg-gray-400'
-					} h-8 px-3 rounded-md font-semibold text-white shadow`}
+						vcInstance ? 'bg-skin-button-alt brightness-button' : 'bg-gray-400'
+					} h-8 px-3 rounded-md font-semibold text-skin-button-alt shadow`}
 					disabled={!vcInstance}
 					onClick={() => {
 						if (validateInputs([memberAddressRef])) {
@@ -104,13 +103,13 @@ const NewAccount = ({ i18n, viteApi, networkType, vcInstance, callContract, setS
 				</button>
 			</div>
 			{members.length > 0 && (
-				<div className="bg-white rounded-md p-8">
+				<div className="bg-skin-middleground rounded-md p-8">
 					<span className="font-bold">Members</span>
 					{members.map((member, i) => {
 						return (
 							<div
 								key={i}
-								className="w-[calc(100%-1.2rem)] border-b-2 border-gray-300 flex justify-between"
+								className="w-[calc(100%-1.2rem)] border-b-2 border-skin-line-divider flex justify-between"
 							>
 								<span className="break-all">{member}</span>
 								<XIcon

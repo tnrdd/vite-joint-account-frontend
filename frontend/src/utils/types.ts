@@ -30,6 +30,7 @@ export type State = {
 	metamaskAddress: string;
 	viteBalanceInfo: ViteBalanceInfo;
 	accountId: number;
+	activeTab: string;
 };
 
 export type ViteBalanceInfo = {
