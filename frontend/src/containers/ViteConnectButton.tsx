@@ -30,7 +30,10 @@ const ViteConnectButton = ({ setState, i18n, vcInstance }: Props) => {
 					<LogoutIcon className="h-full text-skin-muted" />
 					<button
 						className="font-semibold"
-						onClick={() => vcInstance!.killSession()}
+						onClick={() => {
+							vcInstance!.killSession();
+							setState({ accountId: undefined });
+						}}
 						onMouseDown={(e) => e.preventDefault()}
 					>
 						{i18n.logOut}
