@@ -23,12 +23,23 @@ const AppHome = ({
 
 	return (
 		<div className="space-y-4 max-w-3xl mx-auto">
-				<TabNavigation tabNames={['New Account', 'Access Account', 'Deposit', 'Motion']} defaultTab={'New Account'} />
+			{accountId ? (
+				<TabNavigation
+					tabNames={['New Account', 'Access Account', 'Deposit', 'Motion']}
+					defaultTab={'New Account'}
+				/>
+			) : (
+				<TabNavigation tabNames={['New Account', 'Access Account']} defaultTab={'New Account'} />
+			)}
+			{accountId && (
+				<div className="flex justify-center font-bold">
+					{i18n.accountId}: {accountId}
+				</div>
+			)}
 			{activeTab === 'New Account' && <NewAccount />}
 			{activeTab === 'Access Account' && <Access />}
-			{accountId && <div className="flex justify-center font-bold">Account ID: {accountId}</div>}
-			{activeTab === 'Deposit' && <Deposit />}
-			{activeTab === 'Motion' && <MotionView />}
+			{accountId && activeTab === 'Deposit' && <Deposit />}
+			{accountId && activeTab === 'Motion' && <MotionView />}
 		</div>
 	);
 };
