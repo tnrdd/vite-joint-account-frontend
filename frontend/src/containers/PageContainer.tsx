@@ -52,13 +52,16 @@ const PageContainer = ({
 
 	return !i18n ? null : (
 		<div className="h-0 min-h-screen relative flex flex-col">
-			<header className="fx px-2 h-12 justify-between top-[1px] w-full fixed z-50">
+			<header className="bg-skin-base fx px-2 h-12 justify-between top-[1px] w-full fixed z-50">
 				<div className="fx gap-3">
 					<A to="/" className="px-1 h-8">
 						<ViteLogo className="text-skin-base h-7" />
 					</A>
 					<A to="/app" className="text-skin-secondary">
 						{i18n.app}
+					</A>
+					<A to="history" className="text-skin-secondary">
+						{i18n.history}
 					</A>
 				</div>
 				<div className="fx gap-3 relative">

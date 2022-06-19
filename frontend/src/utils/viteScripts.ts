@@ -63,6 +63,11 @@ export const getPastEvents = async (
 	return result;
 };
 
+/*
+ * This function can be replaced by queryContractState of vitejs
+ * when using @vite/vitejs >= v2.3.18-alpha.3
+ */
+
 export const getContractState = async (
 	viteApi: ViteAPI,
 	contractAddress: string,

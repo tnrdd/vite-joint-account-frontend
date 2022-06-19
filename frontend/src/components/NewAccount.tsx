@@ -41,7 +41,7 @@ const NewAccount = ({ i18n, viteApi, networkType, vcInstance, callContract, setS
 			<TextInput
 				_ref={memberAddressRef}
 				disabled={!vcInstance}
-				label={i18n.addMember}
+				label={i18n.memberAddress}
 				value={memberAddress}
 				onUserInput={(v) => memberAddressSet(v.trim())}
 			/>

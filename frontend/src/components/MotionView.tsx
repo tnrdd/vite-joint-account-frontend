@@ -125,7 +125,7 @@ const MotionView = ({
 					</span>
 					<span>
 						{' '}
-						<b>votes:</b>
+						<b>votes: </b>
 						{motion.votes}/{motion.threshold}
 					</span>
 					<button

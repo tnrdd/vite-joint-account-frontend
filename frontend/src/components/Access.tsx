@@ -19,7 +19,7 @@ const Access = ({ i18n, viteApi, networkType, vcInstance, callContract, setState
 				numeric
 				_ref={accountIdRef}
 				disabled={!vcInstance}
-				label={i18n.insertAccountId}
+				label={i18n.accountId}
 				maxDecimals={18}
 				value={accountId}
 				onUserInput={(v) => accountIdSet(v)}
