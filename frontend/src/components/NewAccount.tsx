@@ -1,3 +1,4 @@
+import { wallet } from '@vite/vitejs';
 import { useRef, useState } from 'react';
 import { XIcon } from '@heroicons/react/solid';
 import Modal from './Modal';
@@ -6,6 +7,7 @@ import JointContract from '../contracts/JointAccounts';
 import { connect } from '../utils/globalContext';
 import { validateInputs } from '../utils/misc';
 import { State } from '../utils/types';
+import { CANCELED } from '../utils/constants';
 import { getPastEvents } from '../utils/viteScripts';
 
 type Props = State & {};
@@ -44,6 +46,11 @@ const NewAccount = ({ i18n, viteApi, networkType, vcInstance, callContract, setS
 				label={i18n.memberAddress}
 				value={memberAddress}
 				onUserInput={(v) => memberAddressSet(v.trim())}
+				getIssue={(v) => {
+					if (!wallet.isValidAddress(v)) {
+						return i18n.invalidAddress;
+					}
+				}}
 			/>
 			<div className="flex flex-col gap-4">
 				<button
@@ -66,36 +73,50 @@ const NewAccount = ({ i18n, viteApi, networkType, vcInstance, callContract, setS
 					} h-8 px-3 rounded-md font-semibold text-white shadow`}
 					disabled={!vcInstance}
 					onClick={async () => {
-						if (validateInputs([thresholdRef])) {
-							const contractAddress = JointContract.address[networkType];
-							promptTxConfirmationSet(true);
-							await callContract(JointContract, 'createAccount', [
-								[vcInstance?.accounts[0], ...members],
-								threshold,
-								0,
-								0,
-							]);
-							let logs = await viteApi.request('ledger_getLatestAccountBlock', contractAddress);
-							const events = await getPastEvents(
-								viteApi,
-								contractAddress,
-								JointContract.abi,
-								'AccountCreated',
-								{
-									fromHeight: logs.height,
-									toHeight: logs.height,
-								}
-							);
+						try {
+							if (validateInputs([thresholdRef])) {
+								const contractAddress = JointContract.address[networkType];
+								promptTxConfirmationSet(true);
+								await callContract(JointContract, 'createAccount', [
+									[vcInstance?.accounts[0], ...members],
+									threshold,
+									0,
+									0,
+								]);
+								let logs = await viteApi.request('ledger_getLatestAccountBlock', contractAddress);
+								const events = await getPastEvents(
+									viteApi,
+									contractAddress,
+									JointContract.abi,
+									'AccountCreated',
+									{
+										fromHeight: logs.height,
+										toHeight: logs.height,
+									}
+								);
 
-							const event = events.filter(
-								(item) => item.returnValues['1'] === vcInstance?.accounts[0]
-							)[0];
-							setState({
-								accountId: event.returnValues.accountId,
-								toast: i18n.transactionConfirmed,
-							});
-							thresholdSet('');
-							promptTxConfirmationSet(false);
+								const event = events.filter(
+									(item) => item.returnValues['1'] === vcInstance?.accounts[0]
+								)[0];
+								setState({
+									accountId: event.returnValues.accountId,
+									toast: i18n.transactionConfirmed,
+								});
+								thresholdSet('');
+								promptTxConfirmationSet(false);
+							}
+						} catch (err) {
+							if (err instanceof Error) {
+								console.error(err);
+							} else {
+								if (typeof err === 'object' && err !== null) {
+									const error = err as any;
+									if (error.message && error.code === CANCELED) {
+										setState({ toast: i18n.canceled });
+										promptTxConfirmationSet(false);
+									}
+								}
+							}
 						}
 					}}
 				>

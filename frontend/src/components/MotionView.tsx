@@ -1,12 +1,14 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
+import { wallet } from '@vite/vitejs';
 import Modal from './Modal';
 import TextInput, { TextInputRefObject } from './TextInput';
 import JointContract from '../contracts/JointAccounts';
 import { connect } from '../utils/globalContext';
 import { validateInputs } from '../utils/misc';
-import { toSmallestUnit } from '../utils/strings';
+import { toSmallestUnit, toBiggestUnit } from '../utils/strings';
 import { NULL } from '../utils/constants';
 import { State } from '../utils/types';
+import { INVALID_TOKENID, CANCELED } from '../utils/constants';
 import { getPastEvents, getContractState } from '../utils/viteScripts';
 
 type Props = State & {};
@@ -16,7 +18,7 @@ type Motion = {
 	proposer?: string;
 	to?: string;
 	tokenId?: string;
-	transferAmount?: number;
+	transferAmount?: string;
 	votes?: string | null;
 };
 
@@ -83,7 +85,7 @@ const MotionView = ({
 					proposer: event.proposer,
 					to: event.to,
 					tokenId: event.tokenId,
-					transferAmount: event.transferAmount / 10 ** tokenInfo.decimals,
+					transferAmount: toBiggestUnit(event.transferAmount, tokenInfo.decimals),
 					votes: votes && votes[0],
 				});
 			} else {
@@ -134,12 +136,26 @@ const MotionView = ({
 						} h-8 px-3 rounded-md font-semibold text-white shadow`}
 						disabled={!vcInstance}
 						onClick={async () => {
-							promptTxConfirmationSet(true);
-							await callContract(JointContract, 'voteMotion', [accountId, motion.id]);
-							setState({
-								toast: i18n.transactionConfirmed,
-							});
-							promptTxConfirmationSet(false);
+							try {
+								promptTxConfirmationSet(true);
+								await callContract(JointContract, 'voteMotion', [accountId, motion.id]);
+								setState({
+									toast: i18n.transactionConfirmed,
+								});
+								promptTxConfirmationSet(false);
+							} catch (err) {
+								if (err instanceof Error) {
+									console.error(err);
+								} else {
+									if (typeof err === 'object' && err !== null) {
+										const error = err as any;
+										if (error.message && error.code === CANCELED) {
+											setState({ toast: i18n.canceled });
+											promptTxConfirmationSet(false);
+										}
+									}
+								}
+							}
 						}}
 					>
 						{i18n.vote}
@@ -150,12 +166,26 @@ const MotionView = ({
 						} h-8 px-3 rounded-md font-semibold text-white shadow`}
 						disabled={!vcInstance}
 						onClick={async () => {
-							promptTxConfirmationSet(true);
-							await callContract(JointContract, 'cancelMotion', [accountId, motion.id]);
-							setState({
-								toast: i18n.transactionConfirmed,
-							});
-							promptTxConfirmationSet(false);
+							try {
+								promptTxConfirmationSet(true);
+								await callContract(JointContract, 'cancelMotion', [accountId, motion.id]);
+								setState({
+									toast: i18n.transactionConfirmed,
+								});
+								promptTxConfirmationSet(false);
+							} catch (err) {
+								if (err instanceof Error) {
+									console.error(err);
+								} else {
+									if (typeof err === 'object' && err !== null) {
+										const error = err as any;
+										if (error.message && error.code === CANCELED) {
+											setState({ toast: i18n.canceled });
+											promptTxConfirmationSet(false);
+										}
+									}
+								}
+							}
 						}}
 					>
 						{i18n.cancelMotion}
@@ -195,6 +225,11 @@ const MotionView = ({
 				label={i18n.beneficiaryAddress}
 				value={beneficiaryAddress}
 				onUserInput={(v) => beneficiaryAddressSet(v.trim())}
+				getIssue={(v) => {
+					if (!wallet.isValidAddress(v)) {
+						return i18n.invalidAddress;
+					}
+				}}
 			/>
 			<button
 				className={`${
@@ -202,23 +237,52 @@ const MotionView = ({
 				} h-8 px-3 rounded-md font-semibold text-white shadow`}
 				disabled={!vcInstance}
 				onClick={async () => {
-					if (validateInputs([tokenIdRef, amountRef, beneficiaryAddressRef])) {
-						const tokenInfo = await viteApi.request('contract_getTokenInfoById', tokenId);
-						promptTxConfirmationSet(true);
-						await callContract(JointContract, 'createTransferMotion', [
-							accountId,
-							tokenId,
-							toSmallestUnit(amount, tokenInfo.decimals),
-							beneficiaryAddress,
-							NULL,
-						]);
-						setState({
-							toast: i18n.transactionConfirmed,
-						});
-						tokenIdSet('');
-						amountSet('');
-						beneficiaryAddressSet('');
-						promptTxConfirmationSet(false);
+					try {
+						if (validateInputs([tokenIdRef, amountRef, beneficiaryAddressRef])) {
+							const tokenInfo = await viteApi.request('contract_getTokenInfoById', tokenId);
+							const smallestUnitAmount = toSmallestUnit(amount, tokenInfo.decimals);
+
+							const balance = await getContractState(
+								viteApi,
+								JointContract.address[networkType],
+								JointContract.abi,
+								'balanceOf',
+								[accountId, tokenId]
+							);
+							if (balance && balance[0] <= smallestUnitAmount) {
+								promptTxConfirmationSet(true);
+								await callContract(JointContract, 'createTransferMotion', [
+									accountId,
+									tokenId,
+									smallestUnitAmount,
+									beneficiaryAddress,
+									NULL,
+								]);
+								setState({
+									toast: i18n.transactionConfirmed,
+								});
+								tokenIdSet('');
+								amountSet('');
+								beneficiaryAddressSet('');
+								promptTxConfirmationSet(false);
+							} else {
+								setState({ toast: i18n.insufficientBalance });
+							}
+						}
+					} catch (err) {
+						if (err instanceof Error) {
+							console.error(err);
+						} else {
+							if (typeof err === 'object' && err !== null) {
+								const error = err as any;
+								if (error.error && error.error.code === INVALID_TOKENID) {
+									setState({ toast: i18n.invalidTokenId });
+								} else if (error.message && error.code === CANCELED) {
+									setState({ toast: i18n.canceled });
+									promptTxConfirmationSet(false);
+								}
+							}
+						}
 					}
 				}}
 			>

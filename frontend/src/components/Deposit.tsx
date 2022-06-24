@@ -6,6 +6,7 @@ import { connect } from '../utils/globalContext';
 import { validateInputs } from '../utils/misc';
 import { toSmallestUnit } from '../utils/strings';
 import { State } from '../utils/types';
+import { INVALID_TOKENID, CANCELED } from '../utils/constants';
 
 type Props = State & {};
 
@@ -57,21 +58,37 @@ const Deposit = ({
 				} h-8 px-3 rounded-md font-semibold text-white shadow`}
 				disabled={!vcInstance}
 				onClick={async () => {
-					if (validateInputs([amountRef])) {
-						const tokenInfo = await viteApi.request('contract_getTokenInfoById', tokenId);
-						promptTxConfirmationSet(true);
-						await callContract(
-							JointContract,
-							'deposit',
-							[accountId],
-							tokenId,
-							toSmallestUnit(amount, tokenInfo.decimals)
-						);
-						setState({
-							toast: i18n.transactionConfirmed,
-						});
-						amountSet('');
-						promptTxConfirmationSet(false);
+					try {
+						if (validateInputs([amountRef])) {
+							const tokenInfo = await viteApi.request('contract_getTokenInfoById', tokenId);
+							promptTxConfirmationSet(true);
+							await callContract(
+								JointContract,
+								'deposit',
+								[accountId],
+								tokenId,
+								toSmallestUnit(amount, tokenInfo.decimals)
+							);
+							setState({
+								toast: i18n.transactionConfirmed,
+							});
+							amountSet('');
+							promptTxConfirmationSet(false);
+						}
+					} catch (err) {
+						if (err instanceof Error) {
+							console.error(err);
+						} else {
+							if (typeof err === 'object' && err !== null) {
+								const error = err as any;
+								if (error.error && error.error.code === INVALID_TOKENID) {
+									setState({ toast: i18n.invalidTokenId });
+								} else if (error.message && error.code === CANCELED) {
+									setState({ toast: i18n.canceled });
+									promptTxConfirmationSet(false);
+								}
+							}
+						}
 					}
 				}}
 			>

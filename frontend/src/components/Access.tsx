@@ -38,26 +38,32 @@ const Access = ({ i18n, viteApi, networkType, vcInstance, callContract, setState
 				} h-8 px-3 rounded-md font-semibold text-white shadow`}
 				disabled={!vcInstance}
 				onClick={async () => {
-					if (validateInputs([accountIdRef])) {
-						const contractAddress = JointContract.address[networkType];
-						const exists = await getContractState(
-							viteApi,
-							contractAddress,
-							JointContract.abi,
-							'accountExists',
-							[accountId]
-						);
+					try {
+						if (validateInputs([accountIdRef])) {
+							const contractAddress = JointContract.address[networkType];
+							const exists = await getContractState(
+								viteApi,
+								contractAddress,
+								JointContract.abi,
+								'accountExists',
+								[accountId]
+							);
 
-						if (exists && exists[0] === '0') {
-							setState({
-								toast: i18n.invalidAccountId,
-							});
-						} else {
-							setState({
-								accountId: +accountId,
-							});
+							if (exists && exists[0] === '0') {
+								setState({
+									toast: i18n.invalidAccountId,
+								});
+							} else {
+								setState({
+									accountId: +accountId,
+								});
+							}
+							accountIdSet('');
 						}
-						accountIdSet('');
+					} catch (err) {
+						if (err instanceof Error) {
+							console.error(err);
+						}
 					}
 				}}
 			>

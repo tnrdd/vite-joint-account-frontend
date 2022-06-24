@@ -26,7 +26,7 @@ const AppHome = ({
 			{accountId ? (
 				<TabNavigation
 					tabNames={['New Account', 'Access Account', 'Deposit', 'Motion']}
-					defaultTab={'New Account'}
+					defaultTab={'Deposit'}
 				/>
 			) : (
 				<TabNavigation tabNames={['New Account', 'Access Account']} defaultTab={'New Account'} />
