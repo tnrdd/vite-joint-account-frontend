@@ -249,7 +249,7 @@ const MotionView = ({
 								'balanceOf',
 								[accountId, tokenId]
 							);
-							if (balance && balance[0] <= smallestUnitAmount) {
+							if (balance && parseInt(balance[0]) >= parseInt(smallestUnitAmount)) {
 								promptTxConfirmationSet(true);
 								await callContract(JointContract, 'createTransferMotion', [
 									accountId,
