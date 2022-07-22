@@ -37,6 +37,7 @@ module.exports = {
 			borderColor: {
 				skin: {
 					foreground: 'var(--bg-foreground-color)',
+					'line-divider': 'var(--bg-line-divider-color)',
 				},
 			},
 		},

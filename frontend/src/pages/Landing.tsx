@@ -6,7 +6,7 @@ import { State } from '../utils/types';
 type Props = State;
 
 const Landing = ({ i18n }: Props) => {
-	useTitle('');
+	useTitle('Vite Joint Account');
 	return (
 		<div>
 			<div className="bg-skin-base">

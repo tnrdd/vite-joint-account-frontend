@@ -9,6 +9,7 @@ const en = {
 	system: 'system',
 	logOut: 'Log Out',
 	history: 'History',
+	about: 'About',
 	accountId: 'Account ID',
 	creator: 'Creator',
 	createAccount: 'Create Joint Account',

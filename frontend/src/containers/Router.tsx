@@ -4,6 +4,8 @@ import WS_RPC from '@vite/vitejs-ws';
 import { accountBlock, ViteAPI } from '@vite/vitejs';
 import Landing from '../pages/Landing';
 import AppHome from '../pages/AppHome';
+import History from '../pages/History';
+import About from '../pages/About';
 import { connect } from '../utils/globalContext';
 import { State, ViteBalanceInfo } from '../utils/types';
 import Toast from './Toast';
@@ -11,7 +13,6 @@ import { VCSessionKey } from '../utils/viteConnect';
 import { PROD } from '../utils/constants';
 import PageContainer from '../containers/PageContainer';
 import JointContract from '../contracts/JointAccounts';
-import History from '../pages/History';
 
 const providerWsURLs = {
 	...(PROD ? {} : { localnet: 'ws://localhost:23457' }),
@@ -134,6 +135,7 @@ const Router = ({ setState, vcInstance, networkType }: Props) => {
 					<Route path="/" element={<Landing />} />
 					<Route path="/app" element={<AppHome />} />
 					<Route path="/history" element={<History />} />
+					<Route path="/about" element={<About />} />
 					<Route path="*" element={<Navigate to="/" />} />
 				</Routes>
 			</PageContainer>
